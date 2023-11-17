@@ -31,20 +31,8 @@ public class KafkaConsumer {
     public void outboxListener(@Payload OutBoxMessageCDC outBoxMessageCDC, @Headers ConsumerRecord consumerRecord) throws JsonProcessingException {
 
         String value = (String)outBoxMessageCDC.getAfter().getPayload();
-        if(outBoxMessageCDC.getOp().equals("c") && outBoxMessageCDC.getAfter().getAggregateType().equals("vergi_ode")){
             final IQDatabase payload = objectMapper.readValue(value, IQDatabase.class);
             iqDatabaseService.addIQDatabase(payload);
-        }
-        if(outBoxMessageCDC.getOp().equals("u")){
-            final IQDatabase payload = objectMapper.readValue(value, IQDatabase.class);
-            iqDatabaseService.addIQDatabase(payload);
-        }
-        if(outBoxMessageCDC.getOp().equals("d")){
-            final IQDatabase payload = objectMapper.readValue(value, IQDatabase.class);
-            iqDatabaseService.addIQDatabase(payload);
-        }
-
-
 
     }
 
