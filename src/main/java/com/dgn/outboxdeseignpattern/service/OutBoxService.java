@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Random;
+import java.util.UUID;
 
 @Service
 public class OutBoxService {
@@ -22,7 +24,7 @@ public class OutBoxService {
     public Outbox addOutBox(Account account) throws JsonProcessingException {
 
         return outBoxRepository.save(Outbox.builder()
-                .aggregateId("123456")
+                .aggregateId(String.valueOf(UUID.randomUUID()))
                 .createDate(LocalDateTime.now())
                 .messageType("Account Created")
                 .payload(objectMapper.writeValueAsString(account))

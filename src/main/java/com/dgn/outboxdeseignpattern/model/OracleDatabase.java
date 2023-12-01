@@ -9,12 +9,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity(name = "TABLE_IQ")
+@Entity(name = "TABLE_ORACLE")
 @Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class IQDatabase {
+public class OracleDatabase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

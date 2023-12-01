@@ -1,10 +1,9 @@
 package com.dgn.outboxdeseignpattern.kafka;
 
-import com.dgn.outboxdeseignpattern.model.IQDatabase;
+import com.dgn.outboxdeseignpattern.model.OracleDatabase;
 import com.dgn.outboxdeseignpattern.model.OutBoxMessageCDC;
-import com.dgn.outboxdeseignpattern.service.IQDatabaseService;
+import com.dgn.outboxdeseignpattern.service.OracleDatabaseService;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
@@ -16,23 +15,32 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class KafkaConsumer {
-    private final IQDatabaseService iqDatabaseService;
+
+    private final OracleDatabaseService oracleDatabaseService;
     Logger logger = LoggerFactory.getLogger(KafkaConsumer.class);
     ObjectMapper objectMapper = new ObjectMapper();
 
-    public KafkaConsumer(IQDatabaseService iqDatabaseService) {
-        this.iqDatabaseService = iqDatabaseService;
+    public KafkaConsumer(OracleDatabaseService oracleDatabaseService) {
+        this.oracleDatabaseService = oracleDatabaseService;
     }
+
 
     @KafkaListener(
             topics = "outbox.public.table_outbox",
             groupId = "outbox-group"
     )
-    public void outboxListener(@Payload OutBoxMessageCDC outBoxMessageCDC, @Headers ConsumerRecord consumerRecord) throws JsonProcessingException {
+    public void outboxListener(
+            @Payload OutBoxMessageCDC outBoxMessageCDC,
+            @Headers ConsumerRecord consumerRecord) throws JsonProcessingException {
 
-        String value = (String)outBoxMessageCDC.getAfter().getPayload();
-            final IQDatabase payload = objectMapper.readValue(value, IQDatabase.class);
-            iqDatabaseService.addIQDatabase(payload);
+        logger.info("Kafka Consumer start -- >> \n topic : {}, \n partition : {}, \n offset : {}, \n payload : {}",
+                consumerRecord.topic(),
+                consumerRecord.partition(),
+                consumerRecord.offset(),
+                outBoxMessageCDC.getAfter().getPayload());
+        String value = (String) outBoxMessageCDC.getAfter().getPayload();
+        final OracleDatabase payload = objectMapper.readValue(value, OracleDatabase.class);
+        oracleDatabaseService.addOracleDatabase(payload);
 
     }
 
